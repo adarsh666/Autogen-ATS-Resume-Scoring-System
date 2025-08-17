@@ -1,16 +1,5 @@
 autogen-agentchat
-autogen-core
-autogen-ext
-dotenv
-openai
-tiktoken
 autogen-ext[openai]
-chromadb
-fastapi[standard]
-pydantic
-streamlit
-PyMuPDF
-docx2txt
-textract
-sentence-transformers
-- e.
+autogen-ext[docker]
+pydantic[email]
+pymongo

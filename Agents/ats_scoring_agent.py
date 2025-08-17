@@ -11,6 +11,10 @@ api_key = os.getenv('OPENAI_API_KEY')
 
 structured_model_client = OpenAIChatCompletionClient(
     model='gpt-4o-mini',
+    temperature=0.0,
+    top_p=1,
+    seed=42,
+    max_tokens=500,
     api_key=api_key,
     response_format=ResumeScore
 )

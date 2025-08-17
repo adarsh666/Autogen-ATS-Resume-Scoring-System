@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 
 from custom_tools.vector_db import jd_search
-from prompts.agent_prompt import jd_analysis_agent_prompt
+from prompts.agent_prompt import improvement_recommendation_agent_prompt
 from autogen_core.tools import FunctionTool
 
 
@@ -18,13 +18,12 @@ model_client = OpenAIChatCompletionClient(
 
 retrival_tool = FunctionTool(jd_search,description='A tool to extract job descriptions from vector db')
 
-def get_jd_analysis_agent():
+def get_improvement_recommendation_agent():
     """
-    Returns an instance of the AssistantAgent configured for job description analysis.
+    Returns an instance of the AssistantAgent configured for resume improvement recommendation.
     """
-    jd_analysis_agent = AssistantAgent(name='job_description_analysis_agent',
+    recommendation_agent = AssistantAgent(name='improvement_recommendation_agent',
                                        model_client=model_client,
-                                       system_message=jd_analysis_agent_prompt,
-                                       tools=[retrival_tool],
+                                       system_message=improvement_recommendation_agent_prompt,
                                        reflect_on_tool_use=True)
-    return jd_analysis_agent
+    return recommendation_agent

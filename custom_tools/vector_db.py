@@ -1,7 +1,13 @@
-from database.vector_store import VectorDB
+#from database.vector_store import VectorDB
+import chromadb
+# vector_db = VectorDB()
+# collection = vector_db.get_collection()
 
-vector_db = VectorDB()
-collection = vector_db.get_collection()
+client = chromadb.PersistentClient(path="./vector_store")
+
+# Create / get a collection
+collection_name = "my_collection"
+collection = client.get_or_create_collection(name=collection_name)
 
 
 def jd_search(
@@ -9,7 +15,7 @@ def jd_search(
     top_k: int = 3
     ):
     """
-    Searches the vector store for documents relevant to a given query.
+    Searches the vector store for documents relevant to a given resume data.
     Args:
         resume_data (str): Resume text to search for relevant job descriptions.
         top_k (int): The number of top results to return.
@@ -20,9 +26,7 @@ def jd_search(
             query_texts=resume_data,
             n_results=top_k,
         )
-        return {
-            "job_descriptions" : results['documents'][0]
-        }
+        return  results['documents'][0]
     except Exception as e:
         return f"Error occurred while searching: {str(e)}"
     

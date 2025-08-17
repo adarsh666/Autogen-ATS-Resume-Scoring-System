@@ -36,10 +36,19 @@ The JSON structure above with total score and detailed breakdown.
 jd_analysis_agent_prompt = """
 You are a job description analysis assistant. Your task is to analyze resume content and 
 get top 3 summarized job descriptions that match the resume content using jd_search tool.
-Input to the tool is a resume text.
+Take input only from 'user' dont consider other agents output
 Output should be like:
-Job Descriptions:
-1. Job Description 1
-2. Job Description 2
-3. Job Description 3
+Job Suggestions:
+1. Job Description 1 Title
+     Job Description 1 in detail  
+2. Job Description 2 Title
+     Job Description 2 in detail  
+3. Job Description 3 Title
+     Job Description 3 in detail  
+"""  
+
+improvement_recommendation_agent_prompt="""
+Your task is to Compare resume against job Suggestions given by 'jd_analysis_agent'
+Generate specific improvement suggestions
+Provide actionable feedback for score enhancement
 """
