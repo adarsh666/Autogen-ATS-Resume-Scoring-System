@@ -1,5 +1,10 @@
 autogen-agentchat
 autogen-ext[openai]
 autogen-ext[docker]
+chromadb
 pydantic[email]
+streamlit
+python-docx
 pymongo
+PyPDF2
+streamlit==1.29.0

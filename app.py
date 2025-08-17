@@ -4,16 +4,21 @@ import io
 import asyncio
 from docx import Document
 from dotenv import load_dotenv
+from PIL import Image
+
 from Agents.parser_agent import get_resume_parser_agent
 from Agents.jd_analysis_agent import get_jd_analysis_agent
 from teams.ats_team import getDataAnalyzerTeam
 from autogen_agentchat.messages import TextMessage
 from autogen_agentchat.base import TaskResult
 from utils.docker_util import getDockerCommandLineExecutor,start_docker_container,stop_docker_container
+from utils.tools import remove_files
 load_dotenv() 
 
 import os
 os.getenv("OPENAI_API_KEY")
+IMAGE_FOLDER = "temp"
+remove_files(IMAGE_FOLDER)
 
 st.set_page_config(page_title="ATS Resume Scoring", page_icon="📄")
 st.title("📄 ATS Resume Scoring System - File Input")
@@ -106,10 +111,18 @@ async def run_analyser_gpt(task):
                         st.markdown(message.content)
                 st.session_state.messages.append(message.content)
                 # st.markdown(f"{message.content}")
+
             elif isinstance(message,TaskResult):
                 st.markdown(f'Stop Reason :{message.stop_reason}')
 
                 st.session_state.messages.append(message.stop_reason)
+        if os.path.exists(IMAGE_FOLDER):
+            image_files = [f for f in os.listdir(IMAGE_FOLDER) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+            if len(image_files) > 0:
+                for img_file in image_files[:2]:
+                    img_path = os.path.join(IMAGE_FOLDER, img_file)
+                    image = Image.open(img_path)
+                    st.image(image, caption=img_file, use_column_width=True)
 
         st.session_state.autogen_team_state = await team.save_state()
             
@@ -127,14 +140,12 @@ if uploaded_file is not None:
         st.warning("No extractable text found in the uploaded file.")
     else:
         # Optional: limit very long inputs to avoid hitting context limits
-        max_chars = st.slider("Max characters to send to the model", 2000, 200000, 20000, step=1000)
-        text_to_send = text[:max_chars]
+        #max_chars = st.slider("Max characters to send to the model", 2000, 200000, 20000, step=1000)
+        text_to_send = text# [:max_chars]
 
-        if st.button("Run LLM"):
+        if st.button("Run Agent Team"):
             parser_agent = get_jd_analysis_agent()
             error = asyncio.run(run_analyser_gpt(text_to_send))
             if error:
                 st.error(f'An error occured: {error}')
 
-            with st.expander("View extracted text"):
-                st.text(st.session_state.messages)  # preview up to 5k chars
